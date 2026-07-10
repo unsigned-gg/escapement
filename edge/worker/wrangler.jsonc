@@ -1,0 +1,8 @@
+// Deploy wiring is deferred — no route, no bindings, never deployed from CI.
+// Present so `wrangler deploy --dry-run` can validate the edge once it grows a
+// real surface.
+{
+  "name": "orrery-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01"
+}

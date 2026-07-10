@@ -1,0 +1,16 @@
+{
+  "name": "@unsigned-gg/orrery-edge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Thin Cloudflare Worker edge for the orrery agent-orchestration engine",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260710.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}

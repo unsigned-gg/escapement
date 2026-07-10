@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "crates/orrery-core": {
+      "release-type": "rust",
+      "package-name": "orrery-core"
+    },
+    "edge/worker": {
+      "release-type": "node",
+      "package-name": "@unsigned-gg/orrery-edge"
+    }
+  }
+}

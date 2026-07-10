@@ -1,0 +1,4 @@
+{
+  "crates/orrery-core": "0.1.0",
+  "edge/worker": "0.1.0"
+}
