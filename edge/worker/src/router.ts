@@ -5,7 +5,7 @@ export interface RouteResult {
   body: Record<string, unknown>;
 }
 
-export const SERVICE = "orrery-edge";
+export const SERVICE = "escapement-edge";
 export const VERSION = "0.1.0";
 
 export function route(method: string, pathname: string): RouteResult {

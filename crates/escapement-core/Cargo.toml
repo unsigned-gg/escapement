@@ -1,5 +1,5 @@
 [package]
-name = "orrery-core"
+name = "escapement-core"
 version = "0.1.0"
 description = "Agent-orchestration engine: registry and dispatch primitives"
 edition.workspace = true

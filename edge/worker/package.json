@@ -1,8 +1,8 @@
 {
-  "name": "@unsigned-gg/orrery-edge",
+  "name": "@unsigned-gg/escapement-edge",
   "version": "0.1.0",
   "private": true,
-  "description": "Thin Cloudflare Worker edge for the orrery agent-orchestration engine",
+  "description": "Thin Cloudflare Worker edge for the escapement agent-orchestration engine",
   "type": "module",
   "scripts": {
     "test": "vitest run",

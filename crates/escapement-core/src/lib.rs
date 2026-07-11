@@ -1,4 +1,4 @@
-//! orrery-core — agent-orchestration engine primitives.
+//! escapement-core — agent-orchestration engine primitives.
 //!
 //! v0 surface: an agent [`registry`] (registration, liveness, capability
 //! lookup) and a [`dispatch`] layer (priority task queue, capability-matched
