@@ -1,10 +1,10 @@
-# orrery
+# escapement
 
-Agent-orchestration engine — the conductor of the agent constellation.
+Agent-orchestration engine — metered dispatch for the agent constellation.
 
 ## Layout
 
-- `crates/orrery-core` — the engine (Rust, zero dependencies). v0 surface:
+- `crates/escapement-core` — the engine (Rust, zero dependencies). v0 surface:
   - `registry` — agent registration, heartbeat liveness, capability lookup.
   - `dispatch` — priority task queue with capability-matched, deterministic
     assignment.

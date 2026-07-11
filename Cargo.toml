@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
-members = ["crates/orrery-core"]
+members = ["crates/escapement-core"]
 
 [workspace.package]
 edition = "2021"
 license = "UNLICENSED"
-repository = "https://github.com/unsigned-gg/orrery"
+repository = "https://github.com/unsigned-gg/escapement"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

@@ -2,7 +2,7 @@
 // Present so `wrangler deploy --dry-run` can validate the edge once it grows a
 // real surface.
 {
-  "name": "orrery-edge",
+  "name": "escapement-edge",
   "main": "src/index.ts",
   "compatibility_date": "2026-07-01"
 }

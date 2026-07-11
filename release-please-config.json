@@ -1,13 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
-    "crates/orrery-core": {
+    "crates/escapement-core": {
       "release-type": "rust",
-      "package-name": "orrery-core"
+      "package-name": "escapement-core"
     },
     "edge/worker": {
       "release-type": "node",
-      "package-name": "@unsigned-gg/orrery-edge"
+      "package-name": "@unsigned-gg/escapement-edge"
     }
   }
 }
