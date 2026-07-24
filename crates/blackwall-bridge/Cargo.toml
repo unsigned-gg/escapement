@@ -1,0 +1,20 @@
+[package]
+name = "blackwall-bridge"
+description = "Bridge between escapement-core and blackwall's custody API"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[features]
+serve = ["dep:reqwest", "dep:serde", "dep:serde_json"]
+
+[dependencies]
+escapement-core = { path = "../escapement-core" }
+reqwest = { version = "0.12", optional = true, default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", optional = true, features = ["derive"] }
+serde_json = { version = "1", optional = true }
+
+[lints]
+workspace = true

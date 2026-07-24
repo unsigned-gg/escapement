@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/escapement-core"]
+members = ["crates/blackwall-bridge", "crates/escapement-core"]
 
 [workspace.package]
 edition = "2021"
