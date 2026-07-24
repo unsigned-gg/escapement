@@ -1,6 +1,6 @@
 image:
-  repository: harbor.dev.unsigned.gg/platform/escapement
-  tag: ""  # set to the release tag — never `latest`
+  repository: harbor.unsigned.gg/platform/escapement-serve
+  tag: "v1.0.0"
   pullPolicy: IfNotPresent
 
 service:
