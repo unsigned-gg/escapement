@@ -1,0 +1,13 @@
+FROM rust:1.83-bookworm AS builder
+WORKDIR /build
+COPY Cargo.toml ./
+COPY crates/ ./crates/
+RUN cargo build --release -p escapement-serve
+
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends libc6 && rm -rf /var/lib/apt/lists/*
+RUN useradd -r -s /bin/false nonroot
+
+COPY --from=builder /build/target/release/escapement-serve /usr/local/bin/escapement-serve
+USER nonroot
+ENTRYPOINT ["/usr/local/bin/escapement-serve"]

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: escapement
+description: Agent-orchestration engine — metered dispatch for the agent constellation
+type: application
+version: 0.1.0
+appVersion: "0.2.0"
+home: https://github.com/unsigned-gg/escapement
+sources:
+  - https://github.com/unsigned-gg/escapement
+maintainers:
+  - name: unsigned
+    url: https://unsigned.gg

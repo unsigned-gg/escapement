@@ -1,0 +1,15 @@
+[package]
+name = "escapement-serve"
+description = "Orchestrator daemon that ties escapement-core, blackwall-bridge, and the metering subsystems into a running process"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+escapement-core = { path = "../escapement-core" }
+blackwall-bridge = { path = "../blackwall-bridge" }
+
+[lints]
+workspace = true

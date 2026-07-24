@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: escapement
+  namespace: argocd
+spec:
+  source:
+    repoURL: git@github.com:unsigned-gg/escapement.git
+    path: deploy/helm/escapement
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: escapement
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    # Manual sync (platform norm for new apps)
+    automated: null

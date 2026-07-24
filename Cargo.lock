@@ -97,7 +97,15 @@ dependencies = [
 
 [[package]]
 name = "escapement-core"
+version = "1.0.0"
+
+[[package]]
+name = "escapement-serve"
 version = "0.1.0"
+dependencies = [
+ "blackwall-bridge",
+ "escapement-core",
+]
 
 [[package]]
 name = "find-msvc-tools"

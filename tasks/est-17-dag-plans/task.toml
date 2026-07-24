@@ -1,0 +1,5 @@
+# Task metadata
+# provider = "omp"
+# model = "llm/glm-5.2"
+# read_paths = ["/extra/read/path"]
+# write_paths = ["/extra/write/path"]

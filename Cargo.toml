@@ -1,10 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["crates/blackwall-bridge", "crates/escapement-core"]
+members = ["crates/blackwall-bridge", "crates/escapement-core", "crates/escapement-serve"]
 
 [workspace.package]
 edition = "2021"
-license = "UNLICENSED"
+license = "BUSL-1.1"
 repository = "https://github.com/unsigned-gg/escapement"
 
 [workspace.lints.clippy]

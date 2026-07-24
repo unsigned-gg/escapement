@@ -1,0 +1,23 @@
+[defaults]
+provider = "gateway"
+model = "llm/glm-5.2"
+
+[provider.gateway]
+# OpenAI-compatible LiteLLM gateway on the tailnet.
+# Auth via UNSIGNED_LLM_API_KEY env var.
+base_url = "http://llm/v1"
+
+[provider.omp]
+extra_args = ["--thinking", "max", "--print-thoughts"]
+
+[verify]
+command = "cargo fmt --check --all && cargo clippy --all-targets -- -D warnings && cargo test"
+
+[merge]
+automerge = false
+
+[budget]
+max_tokens_per_run = 200000
+
+[observability]
+otlp_endpoint = "http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces"
