@@ -7,8 +7,12 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  # Recreate, not RollingUpdate — RWO PVC (Longhorn) cannot be multi-attached
+  # during rollout. RollingUpdate spins the new pod before the old one releases
+  # the volume, causing a Multi-Attach deadlock (OPS-694/OPS-927 class).
+  strategy:
+    type: Recreate
   selector:
-    matchLabels:
       app.kubernetes.io/name: escapement
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
