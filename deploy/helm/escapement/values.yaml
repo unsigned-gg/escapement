@@ -85,3 +85,10 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 7858
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: soma
+      ports:
+        - protocol: TCP
+          port: 7858
