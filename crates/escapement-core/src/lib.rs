@@ -28,6 +28,7 @@ pub mod protocol;
 pub mod registry;
 pub mod resilience;
 pub mod telemetry;
+pub mod tracing;
 pub mod waker;
 
 pub use backpressure::{
@@ -55,3 +56,5 @@ pub use telemetry::{
     DispatchEvent, DispatchMetrics, OtlpConfig, TelemetryLog, TelemetryMetric, TelemetrySpan,
 };
 pub use waker::{wake_and_wait, WakeResult, WakerTarget};
+
+pub use tracing::{OtlpExporter, Span, SpanBatch, TraceContext};

@@ -61,8 +61,9 @@ fn handle_request(orch: &mut Orchestrator, stream: std::net::TcpStream) -> io::R
     let method = parts[0];
     let path = parts[1];
 
-    // Read headers until blank line.
+    // Read headers — extract traceparent and content-length.
     let mut content_length = 0;
+    let mut traceparent: Option<String> = None;
     loop {
         let mut header = String::new();
         let n = reader.read_line(&mut header)?;
@@ -76,6 +77,8 @@ fn handle_request(orch: &mut Orchestrator, stream: std::net::TcpStream) -> io::R
                 .trim()
                 .parse()
                 .unwrap_or(0);
+        } else if lower.starts_with("traceparent:") {
+            traceparent = Some(lower.trim_start_matches("traceparent:").trim().to_string());
         }
     }
 
@@ -88,13 +91,32 @@ fn handle_request(orch: &mut Orchestrator, stream: std::net::TcpStream) -> io::R
         String::new()
     };
 
-    // Route.
-    let response = route(orch, method, path, &body);
+    // Parse inbound trace context (W3C Trace Context).
+    let trace_ctx = traceparent
+        .as_deref()
+        .and_then(escapement_core::TraceContext::from_header);
+
+    // Route — pass the trace context so spans can be created.
+    let response = route(orch, method, path, &body, trace_ctx.as_ref());
+
+    // If we created a span, export it.
+    if let Some(ctx) = &trace_ctx {
+        if let Some(span) = &response.2 {
+            let _ = orch.export_span(span, ctx);
+        }
+    }
+
     write_response(&mut writer, response.0, &response.1)?;
     Ok(())
 }
 
-fn route(orch: &mut Orchestrator, method: &str, path: &str, body: &str) -> (u16, String) {
+fn route(
+    orch: &mut Orchestrator,
+    method: &str,
+    path: &str,
+    body: &str,
+    trace_ctx: Option<&escapement_core::TraceContext>,
+) -> (u16, String, Option<escapement_core::Span>) {
     match (method, path) {
         ("GET", "/healthz") => {
             let healthy = orch.is_healthy();
@@ -102,27 +124,44 @@ fn route(orch: &mut Orchestrator, method: &str, path: &str, body: &str) -> (u16,
                 r#"{{"ok":true,"healthy":{healthy},"queue_depth":{}}}"#,
                 orch.queue_depth()
             );
-            (200, json)
+            (200, json, None)
         }
-        ("GET", "/readyz") => (200, r#"{"status":"ok"}"#.into()),
+        ("GET", "/readyz") => (200, r#"{"status":"ok"}"#.into(), None),
         ("GET", "/version") => (
             200,
             format!(
                 r#"{{"service":"{SERVICE}","version":"{VERSION}","protocol":"{PROTOCOL_VERSION}"}}"#
             ),
+            None,
         ),
-        ("POST", "/dispatch") => handle_dispatch(orch, body),
-        ("GET", "/jobs") => handle_list_jobs(orch),
-        ("GET", p) if p.starts_with("/jobs/") => handle_get_job(orch, &p["/jobs/".len()..]),
-        _ => (404, json_error("not found")),
+        ("POST", "/dispatch") => handle_dispatch(orch, body, trace_ctx),
+        ("GET", "/jobs") => (handle_list_jobs(orch).0, handle_list_jobs(orch).1, None),
+        ("GET", p) if p.starts_with("/jobs/") => {
+            let (status, body) = handle_get_job(orch, &p["/jobs/".len()..]);
+            (status, body, None)
+        }
+        _ => (404, json_error("not found"), None),
     }
 }
 
-fn handle_dispatch(orch: &mut Orchestrator, body: &str) -> (u16, String) {
+fn handle_dispatch(
+    orch: &mut Orchestrator,
+    body: &str,
+    trace_ctx: Option<&escapement_core::TraceContext>,
+) -> (u16, String, Option<escapement_core::Span>) {
     let task = match parse_dispatch_body(body) {
         Ok(t) => t,
-        Err(msg) => return (400, json_error(&msg)),
+        Err(msg) => return (400, json_error(&msg), None),
     };
+
+    // Create a child span if we have a trace context.
+    let span = trace_ctx.map(|ctx| {
+        let mut s = ctx.child_span("escapement.dispatch", &task.id);
+        s.set_attribute("capability", &task.required_capability);
+        s.set_attribute("priority", task.priority.to_string());
+        s.end();
+        s
+    });
 
     match orch.submit_task(task) {
         Ok(()) => (
@@ -131,18 +170,21 @@ fn handle_dispatch(orch: &mut Orchestrator, body: &str) -> (u16, String) {
                 r#"{{"protocol":"{PROTOCOL_VERSION}","decision":"admitted","queue_depth":{}}}"#,
                 orch.queue_depth()
             ),
+            span,
         ),
-        Err(OrchestratorError::DuplicateTask(_)) => (409, json_error("duplicate task")),
+        Err(OrchestratorError::DuplicateTask(_)) => (409, json_error("duplicate task"), span),
         Err(OrchestratorError::ProviderAtCapacity(p)) => (
             429,
             format!(r#"{{"error":"provider at capacity","provider":"{p}"}}"#),
+            span,
         ),
         Err(OrchestratorError::BudgetExceeded(p)) => (
             429,
             format!(r#"{{"error":"budget exceeded","provider":"{p}"}}"#),
+            span,
         ),
-        Err(OrchestratorError::RateLimited) => (429, json_error("rate limited")),
-        Err(OrchestratorError::UnknownTask(_)) => (404, json_error("unknown task")),
+        Err(OrchestratorError::RateLimited) => (429, json_error("rate limited"), span),
+        Err(OrchestratorError::UnknownTask(_)) => (404, json_error("unknown task"), span),
     }
 }
 

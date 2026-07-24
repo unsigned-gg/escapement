@@ -82,6 +82,8 @@ pub struct Orchestrator {
     custody: CustodyChain,
     plan_executors: BTreeMap<TaskId, PlanExecutor>,
     metrics: DispatchMetrics,
+    /// OTLP exporter for distributed tracing.
+    otlp: Option<escapement_core::tracing::OtlpExporter>,
     /// Simulated clock (caller-supplied ms) — deterministic.
     clock_ms: u64,
 }
@@ -127,6 +129,16 @@ impl Orchestrator {
         let rate_limiter = TokenBucket::new(config.rate_capacity, config.rate_refill_per_second, 0);
         let dispatcher = Dispatcher::new();
 
+        // Initialize OTLP exporter if endpoint is configured.
+        let otlp = if config.otlp_endpoint.is_empty() {
+            None
+        } else {
+            Some(escapement_core::tracing::OtlpExporter::new(
+                &config.otlp_endpoint,
+                "escapement-serve",
+            ))
+        };
+
         Self {
             config,
             registry: Registry::new(),
@@ -139,8 +151,34 @@ impl Orchestrator {
             custody: CustodyChain::new(),
             plan_executors: BTreeMap::new(),
             metrics: DispatchMetrics::default(),
+            otlp,
             clock_ms: 0,
         }
+    }
+
+    /// Export a completed span via OTLP. Propagates the trace context
+    /// to downstream services via the traceparent header.
+    pub fn export_span(
+        &self,
+        span: &escapement_core::tracing::Span,
+        _ctx: &escapement_core::TraceContext,
+    ) -> Result<(), String> {
+        if let Some(ref exporter) = self.otlp {
+            exporter.export_span(span)
+        } else {
+            Ok(())
+        }
+    }
+
+    /// Get the traceparent header for propagation to a downstream service
+    /// (e.g. blackwall-bridge spawn).
+    #[must_use]
+    pub fn traceparent_for_downstream(
+        &self,
+        ctx: &escapement_core::TraceContext,
+        span_id: &str,
+    ) -> String {
+        escapement_core::tracing::OtlpExporter::propagate_header(ctx, span_id)
     }
 
     /// Register a provider with its concurrency cap.
