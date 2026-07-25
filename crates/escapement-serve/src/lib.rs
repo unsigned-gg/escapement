@@ -156,6 +156,12 @@ impl Orchestrator {
         }
     }
 
+    /// Get a reference to the config (for startup logging).
+    #[must_use]
+    pub fn config_ref(&self) -> &OrchestratorConfig {
+        &self.config
+    }
+
     /// Export a completed span via OTLP. Propagates the trace context
     /// to downstream services via the traceparent header.
     pub fn export_span(
