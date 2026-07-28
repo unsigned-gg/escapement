@@ -1,5 +1,11 @@
-# Conventional Commits + gitleaks (federated standard).
-# Skip: LEFTHOOK=0.
+# Conventional Commits + gitleaks + affected-CI pre-push gate (federated standard).
+# commit-stage = light + fast; pre-push = the affected CI gate ("green before push
+# = no CI surprise"). Skip: LEFTHOOK=0.
+#
+# No moon/proto toolchain here — escapement is a Cargo workspace, so the pre-push
+# gate runs cargo across the workspace (mirrors ci.yml's rust job: fmt + clippy +
+# test). Per adopt-standards.md §C: fail-soft on absent tooling; CI is the hard
+# backstop.
 commit-msg:
   commands:
     conventional:
@@ -12,3 +18,8 @@ pre-commit:
   commands:
     gitleaks:
       run: gitleaks protect --staged --redact --no-banner || echo "gitleaks not installed — CI will enforce"
+
+pre-push:
+  commands:
+    affected-ci:
+      run: cargo test --all-targets
