@@ -1,0 +1,41 @@
+name: Release
+
+# release-please (adopted from terrarium release.yml + adopt-standards.md §1C).
+# Manifest mode driven by release-please-config.json + .release-please-manifest.json
+# — escapement ships TWO packages (crates/escapement-core [rust], edge/worker [node]),
+# so this drives a Release PR per package on every push to main. Merging a Release PR
+# cuts that package's tag + GitHub Release + CHANGELOG.
+#
+# v1.0.0 was cut manually (pre-this-workflow). From the next release on, the standing
+# Release PR is the *only* path to a tag.
+on:
+  push:
+    branches: [main]
+
+# The default GITHUB_TOKEN cannot open PRs when "Allow GitHub Actions to create
+# and approve pull requests" is disabled org-wide (cerebral-work / unsigned-gg
+# posture) — release-please fails with "GitHub Actions is not permitted to create
+# or approve pull requests." Mint a short-lived token from a GitHub App instead: it
+# carries its own contents:write + pull-requests:write and is not subject to that
+# setting. Operator must set, on unsigned-gg/escapement:
+#   vars.RELEASE_BOT_APP_ID         — the App ID of the "cerebral.work" App
+#   secrets.RELEASE_BOT_PRIVATE_KEY — its PEM private key
+permissions:
+  contents: read        # default token stays minimal; the App token carries write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+      - uses: googleapis/release-please-action@8b8fd2cc23b2e18957157a9d923d75aa0c6f6ad5 # v4
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+# TODO(hardening): signed release tags via the App token; Linear release sync on tag.
