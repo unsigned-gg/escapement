@@ -127,7 +127,7 @@ pub struct OtlpConfig {
 impl Default for OtlpConfig {
     fn default() -> Self {
         Self {
-            endpoint: "http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces".into(),
+            endpoint: "http://localhost:4318/v1/traces".into(),
             service_name: "escapement".into(),
         }
     }

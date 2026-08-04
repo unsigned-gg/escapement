@@ -62,7 +62,7 @@ impl Default for OrchestratorConfig {
             rate_capacity: 10.0,
             rate_refill_per_second: 10.0,
             tick_interval_ms: 100,
-            otlp_endpoint: "http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces".into(),
+            otlp_endpoint: "http://localhost:4318/v1/traces".into(),
         }
     }
 }

@@ -20,4 +20,4 @@ automerge = false
 max_tokens_per_run = 200000
 
 [observability]
-otlp_endpoint = "http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces"
+otlp_endpoint = "http://localhost:4318/v1/traces"
