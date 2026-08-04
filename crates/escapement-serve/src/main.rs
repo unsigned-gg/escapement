@@ -4,7 +4,7 @@ use escapement_serve::{Orchestrator, OrchestratorConfig};
 fn main() {
     let addr = std::env::var("ESCAPEMENT_ADDR").unwrap_or_else(|_| "0.0.0.0:7858".to_string());
     let otlp = std::env::var("OTLP_ENDPOINT")
-        .unwrap_or_else(|_| "http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces".to_string());
+        .unwrap_or_else(|_| "http://localhost:4318/v1/traces".to_string());
     let config = OrchestratorConfig {
         otlp_endpoint: otlp,
         ..OrchestratorConfig::default()

@@ -25,7 +25,7 @@ escapement:
   budget:
     maxTokensPerRun: 200000
   observability:
-    otlpEndpoint: http://alloy-otlp.tail769bd2.ts.net:4318/v1/traces
+    otlpEndpoint: http://localhost:4318/v1/traces
 
 # Concurrency limits per capability
 concurrency:
