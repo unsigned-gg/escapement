@@ -283,7 +283,7 @@ mod tests {
     fn otlp_config_default() {
         let config = OtlpConfig::default();
         assert_eq!(config.service_name, "escapement");
-        assert!(config.endpoint.contains("alloy-otlp"));
+        assert!(config.endpoint.contains("localhost:4318"));
     }
 
     #[test]
