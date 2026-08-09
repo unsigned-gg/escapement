@@ -2,3 +2,7 @@
 node_modules/
 dist/
 .wrangler/
+
+# blackwall custody store — runtime state, never committed (estate doctrine;
+# operator ruling 2026-08-08: untracked, no history scrub)
+.blackwall/
