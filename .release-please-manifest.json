@@ -1,4 +1,4 @@
 {
-  "crates/escapement-core": "1.0.0",
-  "edge/worker": "1.0.0"
+  "crates/escapement-core": "1.1.0",
+  "edge/worker": "1.1.0"
 }
