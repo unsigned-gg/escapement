@@ -22,7 +22,12 @@ jobs:
       - run: cargo test --all-targets
 
   edge:
-    runs-on: self-hosted
+    # ubuntu-latest, not self-hosted: ARC scale-set runners carry only their
+    # scale-set name as a label, so bare `self-hosted` never matches them —
+    # this job queued forever once the repo went public (public-repo-ci group
+    # serves ci-rust/reverie-ug only). The edge typecheck needs no cluster
+    # access; GitHub-hosted is correct and egress-safe.
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: edge/worker
